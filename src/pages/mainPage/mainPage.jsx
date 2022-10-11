@@ -6,10 +6,24 @@ import axios from "../../axios.js";
 
 const MainPage = (props) => {
 
+    const navigate = useNavigate();
     const [isText, setIsText] = useState(false);
     const [files, setFiles] = useState([]);
     const [currFile, setCurrFile] = useState({fileName: null, content: null});
 
+    useEffect(() => {
+        let auth = window.localStorage.getItem('token_kbrs');
+        if (!auth) navigate('/auth');
+
+        async function fetchFiles() {
+            const data = await axios.get();
+            return data;
+        }
+
+        const data = fetchFiles();
+        setFiles(data);
+
+    }, []);
 
     const onCreate = async () => {
         const newFile = {
