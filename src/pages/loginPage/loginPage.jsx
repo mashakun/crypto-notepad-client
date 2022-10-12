@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { useForm } from 'react-hook-form';
 import { useNavigate, Navigate } from "react-router-dom";
+import { decrypt, PrivateKey, PublicKey } from 'eciesjs'
 
 import axios from '../../axios.js';
 
@@ -32,48 +33,41 @@ const LoginPage = (props) => {
 
         console.log(values);
 
-        const data = await axios.post('/api/auth/login', values);
+        const {data} = await axios.post('/api/auth/login', values);
         console.log('login data: ', data);
 
-        if (!data.payload) {
-            return alert('No authorization');
-        }
-
-        if ('token' in data.payload) {
-            window.localStorage.setItem('token_kbrs', data.payload.token);
-        } else {
-            alert('No authorization');
-        }
+        window.localStorage.setItem('token_kbrs', data.token);
+        // window.localStorage.setItem('userId_kbrs', data.userId);
+        const sessionKey = decrypt(window.localStorage.getItem('ecies_key_kbrs'), Buffer.from(data.encSessionKey, "hex")).toString();
+        console.log("session key: ", sessionKey);
+        window.localStorage.setItem('sessionKey_kbrs', sessionKey);
 
         setAuth(true);
     }
 
     const onRegister = async (values) => {
 
-        console.log(values);
+        const privateKey = new PrivateKey();
+        const publicKey = privateKey.publicKey.toHex();
 
-        const data = await axios.post('/api/auth/register', {username: values.username, password: values.password});
-        console.log('register data: ', data);
+        let req = { username: values.username, password: values.password, publicKey: publicKey };
+        console.log("req: ", req);
 
-        if (!data.payload) {
-            return alert('No authorization');
-        }
+        const data = await axios.post('/api/auth/signup',
+            { username: values.username, password: values.password, publicKey: publicKey });
 
-        if ('token' in data.payload) {
-            window.localStorage.setItem('token_kbrs', data.payload.token);
+        if (data) {
+            window.localStorage.setItem('ecies_key_kbrs', privateKey.toHex());
+            console.log('register data: ', data);
+            setLogin(true);
         } else {
-            alert('No authorization');
+            console.log("no registration");
         }
-
-        setAuth(true);
     }
 
-    // в это время axios чекает наличие токена и добавляет в хедер после аутентификации(??????? сработает ли)
-
     const navigate = useNavigate();
-
     if (auth) {
-        navigate("/");
+        return <Navigate to="/" />;
     }
 
     return (
@@ -95,9 +89,9 @@ const LoginPage = (props) => {
                     <form onSubmit={handleRegister(onRegister)}>
                         <input type="text" required {...registerRegister("username")}></input>
                         <input type="text" required {...registerRegister("password")}></input>
-                        <input type="email" required {...registerRegister("email")}></input>
+                        <input type="text" required {...registerRegister("email")}></input>
 
-                        <button type="submit">sign in</button>
+                        <button type="submit">sign up</button>
                     </form>
             }
         </div>

@@ -7,66 +7,113 @@ import axios from "../../axios.js";
 const MainPage = (props) => {
 
     const navigate = useNavigate();
+    const token = window.localStorage.getItem('token_kbrs');
     const [isText, setIsText] = useState(false);
     const [files, setFiles] = useState([]);
-    const [currFile, setCurrFile] = useState({fileName: null, content: null});
+    const [currFile, setCurrFile] = useState({ name: null, id: null, content: null });
 
     useEffect(() => {
-        let auth = window.localStorage.getItem('token_kbrs');
-        if (!auth) navigate('/auth');
+        if (!token) navigate('/auth');
 
         async function fetchFiles() {
-            const data = await axios.get();
+            let { data } = await axios.get('/api/files', {
+                headers: {
+                    'Authorization': `token ${token}`
+                }
+            });
             return data;
         }
 
-        const data = fetchFiles();
-        setFiles(data);
+        fetchFiles().then((result) => {
+            console.log("files: ", result.files);
+            setFiles(result.files.map((el) => {
+                return { name: el.name, id: el.id };
+            }));
+        });
 
     }, []);
 
     const onCreate = async () => {
-        const newFile = {
-            fileName: "New_file",
-            content: "",
+
+        const { data } = await axios.post('/api/files', { name: "New_file" }, {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        });
+        // console.log("Creation: ", data);
+
+        setCurrFile({ name: data.name, id: data.id, content: "" });
+        if (files.length === 0) {
+            setFiles([{ name: data.name, id: data.id }]);
+        } else {
+            setFiles([...files, { name: data.name, id: data.id }]);
         }
 
-        const data = await axios.post('/', newFile);
-        console.log("Creation: ", data);
-
-        setCurrFile({fileName: data.fileName, id: data.id, content: data.content});
-        setFiles([...files, {fileName: data.fileName, id: data.id}]);
         setIsText(true);
     }
 
     const onDelete = async () => {
-        const data = await axios.delete(`/${currFile.id}`);
-        console.log("Deleted: ", data);
+        const data = await axios.delete(`/api/files/${currFile.id}`, {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        });
+        // console.log("Deleted: ", data);
 
         let id = files.findIndex((el) => el.id === currFile.id);
         setFiles(files.splice(id, 1));
-        setCurrFile({fileName: null, id: null, content: null});
+        setCurrFile({ fileName: null, id: null, content: null });
         setIsText(false);
+
+        // console.log("files: ", files);
     }
 
     const onSave = async (text) => {
-        const data = await axios.patch(`/${currFile.id}`, {content: text});
+        const data = await axios.patch(`/${currFile.id}`, { content: text });
         console.log("Saved: ", data);
 
-        setCurrFile({fileName: currFile.fileName, content: text});
+        setCurrFile({ fileName: currFile.fileName, content: text });
         setIsText(true);
     }
 
-    const onBack = async () => {}
+    const onBack = async () => {
+        console.log(isText);
+        if (isText) {
+            setIsText(false);
+            setCurrFile({ name: null, id: null, content: null });
+        } else {
+            localStorage.removeItem("token_kbrs");
+            localStorage.removeItem("sessionKey_kbrs");
+            navigate('/auth');
+        }
+    }
+
+    const handleClick = async (el, i) => {
+        // const { data } = await axios.get(`/api/files/${files[i].id}`, {
+        //     headers: {
+        //         'Authorization': `token ${token}`
+        //     }
+        // });
+        // console.log("curr file: ", data);
+
+        // setCurrFile({ name: data.name, id: data.id, content: data.content });
+        setCurrFile({ name: files[i].name, id: files[i].id, content: `meh_${i}` });
+        setIsText(true);
+    }
 
     return (
         <div>
-            <button>create</button>
-            <button>delete</button>
+            <button onClick={onCreate}>create</button>
+            <button onClick={onDelete}>delete</button>
             <button>save</button>
-            <button>back</button>
+            <button onClick={onBack}>back</button>
 
-            <textarea defaultValue={"skdjflakf"}></textarea>
+            {
+                isText ?
+                    <textarea defaultValue={currFile.content}></textarea>
+                    :
+                    <div>{files.map((el, i) => <button onClick={() => handleClick(el, i)} key={i}>{el.name}</button>)}</div>
+            }
 
         </div>
     );
