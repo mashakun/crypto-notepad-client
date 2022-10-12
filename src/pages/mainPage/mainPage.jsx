@@ -11,6 +11,7 @@ const MainPage = (props) => {
     const [isText, setIsText] = useState(false);
     const [files, setFiles] = useState([]);
     const [currFile, setCurrFile] = useState({ name: null, id: null, content: null });
+    const [message, setMessage] = useState('')
 
     useEffect(() => {
         if (!token) navigate('/auth');
@@ -68,11 +69,17 @@ const MainPage = (props) => {
         // console.log("files: ", files);
     }
 
-    const onSave = async (text) => {
-        const data = await axios.patch(`/${currFile.id}`, { content: text });
+    const onSave = async () => {
+        console.log("currFile: ", currFile);
+        console.log("text: ", message);
+        const { data } = await axios.patch(`/api/files/${currFile.id}`, { content: message }, {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        });
         console.log("Saved: ", data);
 
-        setCurrFile({ fileName: currFile.fileName, content: text });
+        setCurrFile({ name: data.name, id: data.id, content: data.content });
         setIsText(true);
     }
 
@@ -88,16 +95,21 @@ const MainPage = (props) => {
         }
     }
 
-    const handleClick = async (el, i) => {
-        // const { data } = await axios.get(`/api/files/${files[i].id}`, {
-        //     headers: {
-        //         'Authorization': `token ${token}`
-        //     }
-        // });
-        // console.log("curr file: ", data);
+    const handleMessageChange = event => {
+        setMessage(event.target.value);
+      };
 
-        // setCurrFile({ name: data.name, id: data.id, content: data.content });
-        setCurrFile({ name: files[i].name, id: files[i].id, content: `meh_${i}` });
+    const handleClick = async (el, i) => {
+        const { data } = await axios.get(`/api/files/${files[i].id}`, {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        });
+        console.log("curr file: ", data);
+
+        setMessage(data.content);
+        setCurrFile({ name: files[i].name, id: files[i].id, content: data.content });
+        // setCurrFile({ name: files[i].name, id: files[i].id, content: `meh_${i}` });
         setIsText(true);
     }
 
@@ -105,12 +117,12 @@ const MainPage = (props) => {
         <div>
             <button onClick={onCreate}>create</button>
             <button onClick={onDelete}>delete</button>
-            <button>save</button>
+            <button onClick={onSave}>save</button>
             <button onClick={onBack}>back</button>
 
             {
                 isText ?
-                    <textarea defaultValue={currFile.content}></textarea>
+                    <textarea defaultValue={message} onChange={handleMessageChange}></textarea>
                     :
                     <div>{files.map((el, i) => <button onClick={() => handleClick(el, i)} key={i}>{el.name}</button>)}</div>
             }
