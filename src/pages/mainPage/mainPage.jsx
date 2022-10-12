@@ -109,7 +109,6 @@ const MainPage = (props) => {
 
         setMessage(data.content);
         setCurrFile({ name: files[i].name, id: files[i].id, content: data.content });
-        // setCurrFile({ name: files[i].name, id: files[i].id, content: `meh_${i}` });
         setIsText(true);
     }
 
