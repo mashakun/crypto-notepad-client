@@ -14,6 +14,7 @@ const MainPage = (props) => {
     const [message, setMessage] = useState('')
 
     useEffect(() => {
+        console.log("rerendered");
         if (!token) navigate('/auth');
 
         async function fetchFiles() {
@@ -54,15 +55,16 @@ const MainPage = (props) => {
     }
 
     const onDelete = async () => {
-        const data = await axios.delete(`/api/files/${currFile.id}`, {
+        const {data} = await axios.delete(`/api/files/${currFile.id}`, {
             headers: {
                 'Authorization': `token ${token}`
             }
         });
-        // console.log("Deleted: ", data);
+        console.log("Deleted: ", data);
 
         let id = files.findIndex((el) => el.id === currFile.id);
         setFiles(files.splice(id, 1));
+        console.log("files length: ", files.length);
         setCurrFile({ fileName: null, id: null, content: null });
         setIsText(false);
 
@@ -123,7 +125,7 @@ const MainPage = (props) => {
                 isText ?
                     <textarea defaultValue={message} onChange={handleMessageChange}></textarea>
                     :
-                    <div>{files.map((el, i) => <button onClick={() => handleClick(el, i)} key={i}>{el.name}</button>)}</div>
+                    <div>{files.map((el, i) => <button onClick={() => handleClick(el, i)} key={el.id}>{el.name}</button>)}</div>
             }
 
         </div>
