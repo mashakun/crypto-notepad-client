@@ -41,6 +41,7 @@ const LoginPage = (props) => {
         const sessionKey = decrypt(window.localStorage.getItem('ecies_key_kbrs'), Buffer.from(data.encSessionKey, "hex")).toString();
         // console.log("session key: ", sessionKey);
         window.localStorage.setItem('sessionKey_kbrs', sessionKey);
+        window.localStorage.setItem('iv_kbrs', data.iv);
 
         setAuth(true);
     }

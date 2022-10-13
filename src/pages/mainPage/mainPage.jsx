@@ -10,6 +10,7 @@ const MainPage = (props) => {
     const navigate = useNavigate();
     const token = window.localStorage.getItem('token_kbrs');
     const sessionKey = window.localStorage.getItem('sessionKey_kbrs');
+    const iv = window.localStorage.getItem('iv_kbrs');
     const [isText, setIsText] = useState(false);
     const [files, setFiles] = useState([]);
     const [currFile, setCurrFile] = useState({ name: null, id: null, content: null });
@@ -46,6 +47,7 @@ const MainPage = (props) => {
         });
         // console.log("Creation: ", data);
 
+        setMessage("");
         setCurrFile({ name: data.name, id: data.id, content: "" });
         if (files.length === 0) {
             setFiles([{ name: data.name, id: data.id }]);
@@ -74,15 +76,22 @@ const MainPage = (props) => {
     }
 
     const onSave = async () => {
-        console.log("currFile: ", currFile);
+        console.log("encryption: ")
         console.log("text: ", message);
-        
+        console.log("key: ", Buffer.from(sessionKey, "hex"));
+        console.log("iv: ", Buffer.from(iv, "hex"));
 
-        const { data } = await axios.patch(`/api/files/${currFile.id}`, { content: message }, {
+        const text = message;
+        const cipher = crypto.createCipheriv('aes-256-cfb', Buffer.from(sessionKey, "hex"), Buffer.from(iv, "hex"));
+        const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
+        console.log("encrypted: ", encrypted.toString("hex"));
+
+        const { data } = await axios.patch(`/api/files/${currFile.id}`, { content: encrypted.toString("hex") }, {
             headers: {
                 'Authorization': `token ${token}`
             }
         });
+        
         console.log("Saved: ", data);
 
         setCurrFile({ name: data.name, id: data.id, content: data.content });
@@ -111,12 +120,18 @@ const MainPage = (props) => {
                 'Authorization': `token ${token}`
             }
         });
-        console.log("curr file: ", data);
 
         const text = data.content;
+        console.log("decryption: ")
+        console.log("text: ", data.content);
+        console.log("key: ", Buffer.from(sessionKey, "hex"));
+        console.log("iv: ", Buffer.from(iv, "hex"));
+
+        
         const encrypted = Buffer.from(text, 'hex');
-        const decipher = crypto.createDecipheriv('aes-256-cfb', Buffer.from(sessionKey, 'hex'), crypto.randomBytes(16));
+        const decipher = crypto.createDecipheriv('aes-256-cfb', Buffer.from(sessionKey, "hex"), Buffer.from(iv, "hex"));
         const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
+        console.log("decrypted: ", decrypted.toString());
 
         setMessage(decrypted.toString());
         setCurrFile({ name: files[i].name, id: files[i].id, content: decrypted.toString() });
