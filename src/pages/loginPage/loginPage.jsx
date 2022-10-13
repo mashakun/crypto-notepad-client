@@ -39,7 +39,7 @@ const LoginPage = (props) => {
         window.localStorage.setItem('token_kbrs', data.token);
         // window.localStorage.setItem('userId_kbrs', data.userId);
         const sessionKey = decrypt(window.localStorage.getItem('ecies_key_kbrs'), Buffer.from(data.encSessionKey, "hex")).toString();
-        console.log("session key: ", sessionKey);
+        // console.log("session key: ", sessionKey);
         window.localStorage.setItem('sessionKey_kbrs', sessionKey);
 
         setAuth(true);

@@ -2,12 +2,14 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 
+import crypto from 'crypto';
 import axios from "../../axios.js";
 
 const MainPage = (props) => {
 
     const navigate = useNavigate();
     const token = window.localStorage.getItem('token_kbrs');
+    const sessionKey = window.localStorage.getItem('sessionKey_kbrs');
     const [isText, setIsText] = useState(false);
     const [files, setFiles] = useState([]);
     const [currFile, setCurrFile] = useState({ name: null, id: null, content: null });
@@ -27,7 +29,7 @@ const MainPage = (props) => {
         }
 
         fetchFiles().then((result) => {
-            console.log("files: ", result.files);
+            // console.log("files: ", result.files);
             setFiles(result.files.map((el) => {
                 return { name: el.name, id: el.id };
             }));
@@ -60,12 +62,12 @@ const MainPage = (props) => {
                 'Authorization': `token ${token}`
             }
         });
-        console.log("Deleted: ", data);
+        // console.log("Deleted: ", data);
 
         let id = files.findIndex((el) => el.id === currFile.id);
         setFiles(files.splice(id, 1));
         console.log("files length: ", files.length);
-        setCurrFile({ fileName: null, id: null, content: null });
+        setCurrFile({ name: null, id: null, content: null });
         setIsText(false);
 
         // console.log("files: ", files);
@@ -74,6 +76,8 @@ const MainPage = (props) => {
     const onSave = async () => {
         console.log("currFile: ", currFile);
         console.log("text: ", message);
+        
+
         const { data } = await axios.patch(`/api/files/${currFile.id}`, { content: message }, {
             headers: {
                 'Authorization': `token ${token}`
@@ -109,8 +113,13 @@ const MainPage = (props) => {
         });
         console.log("curr file: ", data);
 
-        setMessage(data.content);
-        setCurrFile({ name: files[i].name, id: files[i].id, content: data.content });
+        const text = data.content;
+        const encrypted = Buffer.from(text, 'hex');
+        const decipher = crypto.createDecipheriv('aes-256-cfb', Buffer.from(sessionKey, 'hex'), crypto.randomBytes(16));
+        const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
+
+        setMessage(decrypted.toString());
+        setCurrFile({ name: files[i].name, id: files[i].id, content: decrypted.toString() });
         setIsText(true);
     }
 
