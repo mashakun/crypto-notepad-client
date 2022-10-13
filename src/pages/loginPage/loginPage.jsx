@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { useForm } from 'react-hook-form';
 import { Navigate } from "react-router-dom";
-import { decrypt, PrivateKey} from 'eciesjs'
+import { decrypt, PrivateKey } from 'eciesjs'
 import cls from "./loginPage.module.css";
 import icon from "./VectorUser.svg";
 
@@ -36,17 +36,19 @@ const LoginPage = (props) => {
 
         console.log(values);
 
-        const {data} = await axios.post('/api/auth/login', values);
-        console.log('login data: ', data);
+        try {
+            const { data } = await axios.post('/api/auth/login', values);
+            console.log('login data: ', data);
 
-        window.localStorage.setItem('token_kbrs', data.token);
-        // window.localStorage.setItem('userId_kbrs', data.userId);
-        const sessionKey = decrypt(window.localStorage.getItem('ecies_key_kbrs'), Buffer.from(data.encSessionKey, "hex")).toString();
-        // console.log("session key: ", sessionKey);
-        window.localStorage.setItem('sessionKey_kbrs', sessionKey);
-        window.localStorage.setItem('iv_kbrs', data.iv);
+            window.localStorage.setItem('token_kbrs', data.token);
+            const sessionKey = decrypt(window.localStorage.getItem('ecies_key_kbrs'), Buffer.from(data.encSessionKey, "hex")).toString();
+            window.localStorage.setItem('sessionKey_kbrs', sessionKey);
+            window.localStorage.setItem('iv_kbrs', data.iv);
 
-        setAuth(true);
+            setAuth(true);
+        } catch (err) {
+            alert(err.message);
+        }
     }
 
     const onRegister = async (values) => {
@@ -69,7 +71,6 @@ const LoginPage = (props) => {
         }
     }
 
-    // const navigate = useNavigate();
     if (auth) {
         return <Navigate to="/" />;
     }
