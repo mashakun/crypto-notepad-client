@@ -1,0 +1,166 @@
+.mainPage {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr 9fr 1fr;
+    grid-template-rows: 1fr 4fr 1fr;
+    /* grid-column-gap: 7px; */
+    /* grid-row-gap: 7px; */
+    height:100vh;
+    background-color: #50545D;
+ }
+
+ .buttons {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 3;
+
+    display: grid;
+
+    grid-template-columns: 1fr 3fr 1fr;
+    grid-template-rows: 1fr 2fr 1fr 2fr 1fr 2fr 1fr 2fr 1fr;
+ }
+
+ .buttonCreate {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 3;
+
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 5px;
+    background-color:  #FFFFFF;
+  
+    font-family: "Lato", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 18px;
+    color: #50545d;
+ }
+
+ .buttonCreate:hover {
+    background-color:  #EF476F;
+    color: #FFFFFF;
+}
+
+ .buttonDelete {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 4;
+    grid-row-end: 5;
+
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 5px;
+    background-color:  #FFFFFF;
+  
+    font-family: "Lato", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 18px;
+    color: #50545d;
+ }
+ 
+ .buttonDelete:hover {
+    background-color:  #EF476F;
+    color: #FFFFFF;
+}
+
+ .buttonSave {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 6;
+    grid-row-end: 7;
+
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 5px;
+    background-color:  #FFFFFF;
+  
+    font-family: "Lato", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 18px;
+    color: #50545d;
+ }
+
+ .buttonSave:hover {
+    background-color:  #EF476F;
+    color: #FFFFFF;
+}
+
+ .buttonBack {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 8;
+    grid-row-end: 9;
+
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 5px;
+    background-color:  #FFFFFF;
+  
+    font-family: "Lato", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 18px;
+    color: #50545d;
+ }
+
+ .buttonBack:hover {
+    background-color:  #EF476F;
+    color: #FFFFFF;
+}
+
+ .fileText {
+    grid-column-start: 4;
+    grid-column-end: 5;
+    grid-row-start: 2;
+    grid-row-end: 3;
+
+    font-family: "Lato", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 18px;
+    color: #50545d;
+
+    border-radius: 5px;
+ }
+
+ .files {
+    grid-column-start: 4;
+    grid-column-end: 5;
+    grid-row-start: 2;
+    grid-row-end: 3;
+
+    display: grid;
+    background-color: #FFFFFF;
+ }
+
+ .fileName {
+    font-family: "Lato", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 18px;
+    color: #50545d;
+
+    width: 100%;
+    height: 100%;
+    border: 2px solid transparent;
+    background-color:  #FFFFFF;
+ }
+
+ .fileName:hover {
+    border: 2px solid #50545d;
+    /* color: #EF476F; */
+ }

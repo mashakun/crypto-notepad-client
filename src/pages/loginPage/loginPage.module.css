@@ -1,0 +1,149 @@
+.loginPage {
+    display: grid;
+    grid-template-columns: 4fr 2fr 1fr 2fr 4fr;
+    grid-template-rows: 1fr 4fr 1fr;
+    height:100vh;
+    background-color: #50545d;
+ }
+
+ .loginButton {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 2;
+
+    border: 30px solid #50545d;
+    border-radius: 34px;
+  
+    font-family: "Lato", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 18px;
+    color: #50545d;
+ }
+
+ .loginButton:hover {
+    background-color: #EF476F;
+    color: #FFFFFF;
+}
+
+ .registerButton {
+    grid-column-start: 4;
+    grid-column-end: 5;
+    grid-row-start: 1;
+    grid-row-end: 2;
+
+    border: 30px solid #50545d;
+    border-radius: 34px;
+  
+    font-family: "Lato", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 18px;
+    color: #50545d;
+ }
+
+ .registerButton:hover {
+    background-color: #EF476F;
+    color: #FFFFFF;
+}
+
+ .loginForm {
+    grid-column-start: 2;
+    grid-column-end: 5;
+    grid-row-start: 2;
+    grid-row-end: 3;
+    background-color: #FFFFFF;
+  
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+  
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 2fr 1fr;
+    grid-template-rows: 6fr 1.5fr 1fr 1.5fr 1.5fr 1fr 1fr;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .icon {
+    grid-column-start: 1;
+    grid-column-end: 6;
+    grid-row-start: 1;
+    grid-row-end: 2;
+  }
+  
+  .nameInput {
+    grid-column-start: 2;
+    grid-column-end: 5;
+    grid-row-start: 2;
+    grid-row-end: 3;
+  
+    width: 100%;
+    height: 90%;
+    border: 1px solid #50545d;
+    outline:none;
+    border-radius: 5px;
+  
+    font-family: "Lato", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 30px;
+    color: #50545d;
+  }
+  
+  .nameInput:active {
+    border: none;
+    outline:none;
+  }
+  
+  .passwordInput {
+    grid-column-start: 2;
+    grid-column-end: 5;
+    grid-row-start: 4;
+    grid-row-end: 5;
+  
+    width: 100%;
+    height: 90%;
+    border: 1px solid #50545d;
+    outline:none;
+    border-radius: 5px;
+  
+    font-family: "Lato", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 30px;
+    color: #50545d;
+  }
+  
+  .passwordInput:active {
+    border: none;
+    outline:none;
+  }
+  
+  .enterButton {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 6;
+    grid-row-end: 7;
+  
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 5px;
+  
+    font-family: "Lato", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 18px;
+    color: #50545d;
+  }
+  
+  .enterButton:hover {
+      background-color: #50545d;
+      color: #FFFFFF;
+  }

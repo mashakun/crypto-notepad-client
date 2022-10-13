@@ -1,8 +1,11 @@
 import React from "react";
 import { useState } from "react";
 import { useForm } from 'react-hook-form';
-import { useNavigate, Navigate } from "react-router-dom";
-import { decrypt, PrivateKey, PublicKey } from 'eciesjs'
+import { Navigate } from "react-router-dom";
+import { decrypt, PrivateKey} from 'eciesjs'
+import cls from "./loginPage.module.css";
+import icon from "./VectorUser.svg";
+
 
 import axios from '../../axios.js';
 
@@ -66,33 +69,35 @@ const LoginPage = (props) => {
         }
     }
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     if (auth) {
         return <Navigate to="/" />;
     }
 
     return (
-        <div>
-            <button onClick={() => setLogin(true)}>login</button>
-            <button onClick={() => setLogin(false)}>register</button>
+        <div className={cls.loginPage}>
+            <button className={cls.loginButton} onClick={() => setLogin(true)}>login</button>
+            <button className={cls.registerButton} onClick={() => setLogin(false)}>register</button>
 
             {
                 login ?
-                    <form onSubmit={handleLogin(onLogin)}>
-                        <input type="text" {...registerLogin("username")} required></input>
-                        <input type="text" {...registerLogin("password")} required></input>
+                    <form className={cls.loginForm} onSubmit={handleLogin(onLogin)}>
+                        <img src={icon} alt="" className={cls.icon} />
+                        <input className={cls.nameInput} type="text" {...registerLogin("username")} required></input>
+                        <input className={cls.passwordInput} type="text" {...registerLogin("password")} required></input>
 
-                        <button type="submit">sign in</button>
+                        <button className={cls.enterButton} type="submit">sign in</button>
                     </form>
 
                     :
 
-                    <form onSubmit={handleRegister(onRegister)}>
-                        <input type="text" required {...registerRegister("username")}></input>
-                        <input type="text" required {...registerRegister("password")}></input>
-                        <input type="text" required {...registerRegister("email")}></input>
+                    <form className={cls.loginForm} onSubmit={handleRegister(onRegister)}>
+                        <img src={icon} alt="" className={cls.icon} />
+                        <input className={cls.nameInput} type="text" required {...registerRegister("username")}></input>
+                        <input className={cls.passwordInput} type="text" required {...registerRegister("password")}></input>
+                        {/* <input type="text" required {...registerRegister("email")}></input> */}
 
-                        <button type="submit">sign up</button>
+                        <button className={cls.enterButton} type="submit">sign up</button>
                     </form>
             }
         </div>

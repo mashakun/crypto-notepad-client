@@ -1,9 +1,10 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import crypto from 'crypto';
 import axios from "../../axios.js";
+import cls from "./mainPage.module.css";
 
 const MainPage = (props) => {
 
@@ -11,6 +12,7 @@ const MainPage = (props) => {
     const token = window.localStorage.getItem('token_kbrs');
     const sessionKey = window.localStorage.getItem('sessionKey_kbrs');
     const iv = window.localStorage.getItem('iv_kbrs');
+    const [counter, setCounter] = useState(0);
     const [isText, setIsText] = useState(false);
     const [files, setFiles] = useState([]);
     const [currFile, setCurrFile] = useState({ name: null, id: null, content: null });
@@ -34,18 +36,18 @@ const MainPage = (props) => {
             setFiles(result.files.map((el) => {
                 return { name: el.name, id: el.id };
             }));
+            if (files) setCounter(files.length);
         });
 
-    }, []);
+    }, [isText]);
 
     const onCreate = async () => {
 
-        const { data } = await axios.post('/api/files', { name: "New_file" }, {
+        const { data } = await axios.post('/api/files', { name: `file_${counter}` }, {
             headers: {
                 'Authorization': `token ${token}`
             }
         });
-        // console.log("Creation: ", data);
 
         setMessage("");
         setCurrFile({ name: data.name, id: data.id, content: "" });
@@ -55,11 +57,12 @@ const MainPage = (props) => {
             setFiles([...files, { name: data.name, id: data.id }]);
         }
 
+        setCounter(counter + 1);
         setIsText(true);
     }
 
     const onDelete = async () => {
-        const {data} = await axios.delete(`/api/files/${currFile.id}`, {
+        const { data } = await axios.delete(`/api/files/${currFile.id}`, {
             headers: {
                 'Authorization': `token ${token}`
             }
@@ -91,7 +94,7 @@ const MainPage = (props) => {
                 'Authorization': `token ${token}`
             }
         });
-        
+
         console.log("Saved: ", data);
 
         setCurrFile({ name: data.name, id: data.id, content: data.content });
@@ -112,7 +115,7 @@ const MainPage = (props) => {
 
     const handleMessageChange = event => {
         setMessage(event.target.value);
-      };
+    };
 
     const handleClick = async (el, i) => {
         const { data } = await axios.get(`/api/files/${files[i].id}`, {
@@ -127,7 +130,7 @@ const MainPage = (props) => {
         console.log("key: ", Buffer.from(sessionKey, "hex"));
         console.log("iv: ", Buffer.from(iv, "hex"));
 
-        
+
         const encrypted = Buffer.from(text, 'hex');
         const decipher = crypto.createDecipheriv('aes-256-cfb', Buffer.from(sessionKey, "hex"), Buffer.from(iv, "hex"));
         const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
@@ -139,17 +142,24 @@ const MainPage = (props) => {
     }
 
     return (
-        <div>
-            <button onClick={onCreate}>create</button>
-            <button onClick={onDelete}>delete</button>
-            <button onClick={onSave}>save</button>
-            <button onClick={onBack}>back</button>
+        <div className={cls.mainPage}>
+            <div className={cls.buttons}>
+                <button className={cls.buttonCreate} onClick={onCreate}>create</button>
+                <button className={cls.buttonDelete} onClick={onDelete}>delete</button>
+                <button className={cls.buttonSave} onClick={onSave}>save</button>
+                <button className={cls.buttonBack} onClick={onBack}>back</button>
+            </div>
 
             {
                 isText ?
-                    <textarea defaultValue={message} onChange={handleMessageChange}></textarea>
+                    <textarea className={cls.fileText} defaultValue={message} onChange={handleMessageChange}></textarea>
                     :
-                    <div>{files.map((el, i) => <button onClick={() => handleClick(el, i)} key={el.id}>{el.name}</button>)}</div>
+                    <div className={cls.files}>
+                        {files.map((el, i) =>
+                            <button className={cls.fileName} onClick={() => handleClick(el, i)} key={el.id}>
+                                {el.name}
+                            </button>)}
+                    </div>
             }
 
         </div>
